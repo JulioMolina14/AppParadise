@@ -1,8 +1,11 @@
+import 'package:chat_indisciplinadas/helpers/mostrar_alerta.dart';
+import 'package:chat_indisciplinadas/services/authserices.dart';
 import 'package:chat_indisciplinadas/widgets/boton_label.dart';
 import 'package:chat_indisciplinadas/widgets/custom_inputs.dart';
 import 'package:chat_indisciplinadas/widgets/labels.dart';
 import 'package:chat_indisciplinadas/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Login_UserPage extends StatelessWidget {
   @override
@@ -43,34 +46,47 @@ class _Form extends StatefulWidget {
 }
 
 class __FormState extends State<_Form> {
-  final _phone = TextEditingController();
-  final _password = TextEditingController();
+  final _email = TextEditingController();
+  final _contrasena = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthServices>(context);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 50),
       child: Column(
         children: [
           Custom_Input(
-            icon: Icons.phone_android_rounded,
-            placeholder: 'Telefono',
-            textController: _phone,
-            keyboardType: TextInputType.phone,
+            icon: Icons.email,
+            placeholder: 'Correo',
+            textController: _email,
+            keyboardType: TextInputType.emailAddress,
             isPhone: false,
           ),
           Custom_Input(
             icon: Icons.password_rounded,
             placeholder: 'Contraseña',
-            textController: _password,
-            keyboardType: TextInputType.phone,
+            textController: _contrasena,
+            keyboardType: TextInputType.text,
             isPhone: true,
           ),
           BotonLabel(
-              text: 'Ingrese',
-              onPressed: () {
-                print(_password.text);
-                print(_phone.text);
-              })
+            text: 'Ingrese',
+            onPressed: authService.autenticando
+                ? null
+                : () async {
+                    FocusScope.of(context).unfocus();
+                    final loginOK = await authService.loginUser(
+                      _email.text.trim(),
+                      _contrasena.text.trim(),
+                    );
+                    if (loginOK) {
+                      Navigator.pushNamed(context, 'User');
+                    } else {
+                      mostarAlerta(context, 'Login incorrecto',
+                          'Revisa el correo o la contraseña');
+                    }
+                  },
+          )
         ],
       ),
     );

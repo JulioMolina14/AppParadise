@@ -1,8 +1,11 @@
+import 'package:chat_indisciplinadas/helpers/mostrar_alerta.dart';
+import 'package:chat_indisciplinadas/services/authserices.dart';
 import 'package:chat_indisciplinadas/widgets/boton_label.dart';
 import 'package:chat_indisciplinadas/widgets/custom_inputs.dart';
 import 'package:chat_indisciplinadas/widgets/labels.dart';
 import 'package:chat_indisciplinadas/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Register_UserPage extends StatelessWidget {
   @override
@@ -43,11 +46,13 @@ class _Form extends StatefulWidget {
 }
 
 class __FormState extends State<_Form> {
-  final _phone = TextEditingController();
+  final _corre = TextEditingController();
   final _password = TextEditingController();
   final _nombre = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthServices>(context);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 50),
       child: Column(
@@ -60,25 +65,36 @@ class __FormState extends State<_Form> {
             isPhone: false,
           ),
           Custom_Input(
-            icon: Icons.phone_android_rounded,
-            placeholder: 'Telefono',
-            textController: _phone,
-            keyboardType: TextInputType.phone,
+            icon: Icons.email,
+            placeholder: 'Correo',
+            textController: _corre,
+            keyboardType: TextInputType.emailAddress,
             isPhone: false,
           ),
           Custom_Input(
             icon: Icons.password_rounded,
             placeholder: 'Contraseña',
             textController: _password,
-            keyboardType: TextInputType.phone,
+            keyboardType: TextInputType.text,
             isPhone: true,
           ),
           BotonLabel(
               text: 'Ingrese',
-              onPressed: () {
-                print(_password.text);
-                print(_phone.text);
-              })
+              onPressed: authService.autenticando
+                  ? null
+                  : () async {
+                      final registroOK = await authService.registernUser(
+                          _nombre.text.trim(),
+                          _corre.text.trim(),
+                          _password.text.trim());
+
+                      if (registroOK == true) {
+                        Navigator.pushReplacementNamed(context, 'User');
+                      } else {
+                        mostarAlerta(
+                            context, 'Registro incorrecto', registroOK);
+                      }
+                    })
         ],
       ),
     );

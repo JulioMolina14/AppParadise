@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class BotonLabel extends StatelessWidget {
   final String text;
-  final Function onPressed;
+  final Function()? onPressed;
 
   const BotonLabel({Key? key, required this.text, required this.onPressed})
       : super(key: key);
@@ -11,7 +11,7 @@ class BotonLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        onPressed();
+        onPressed!();
       },
       child: Container(
         width: double.infinity,
