@@ -1,5 +1,6 @@
 import 'package:chat_indisciplinadas/helpers/mostrar_alerta.dart';
 import 'package:chat_indisciplinadas/services/authserices.dart';
+import 'package:chat_indisciplinadas/services/socket.dart';
 import 'package:chat_indisciplinadas/widgets/boton_label.dart';
 import 'package:chat_indisciplinadas/widgets/custom_inputs.dart';
 import 'package:chat_indisciplinadas/widgets/labels.dart';
@@ -51,6 +52,7 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthServices>(context);
+    final socketService = Provider.of<SocketService>(context);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 50),
       child: Column(
@@ -80,6 +82,7 @@ class __FormState extends State<_Form> {
                       _contrasena.text.trim(),
                     );
                     if (loginOK) {
+                      socketService.conectado();
                       Navigator.pushNamed(context, 'User');
                     } else {
                       mostarAlerta(context, 'Login incorrecto',
